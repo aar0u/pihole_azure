@@ -3,18 +3,17 @@ variable "resource_group_location" {
   description = "Location of the resource group."
 }
 
-variable "resource_group_name_prefix" {
-  default     = "rg"
-  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
+variable "resource_group_name" {
+  default     = "rg-major-grub"
+  description = "Resource group name."
 }
 
 variable "username" {
-  type        = string
-  description = "The username for the local account that will be created on the new VM."
   default     = "azureuser"
+  description = "The username for the local account that will be created on the new VM."
 }
 
 variable "source_ip" {
-  type        = string
+  default     = ""
   description = "The IP to access the new VM."
 }

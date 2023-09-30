@@ -13,7 +13,12 @@ resource "azurerm_nat_gateway" "my_terraform_nat" {
   idle_timeout_in_minutes = 4
 }
 
-resource "azurerm_nat_gateway_public_ip_prefix_association" "my_terraform_nat_assoc" {
+resource "azurerm_nat_gateway_public_ip_prefix_association" "my_terraform_nat_public_ip_assoc" {
   nat_gateway_id      = azurerm_nat_gateway.my_terraform_nat.id
   public_ip_prefix_id = azurerm_public_ip_prefix.my_terraform_nat_public_ip.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "my_terraform_nat_subnet_assoc" {
+  subnet_id      = azurerm_subnet.my_terraform_subnet.id
+  nat_gateway_id = azurerm_nat_gateway.my_terraform_nat.id
 }

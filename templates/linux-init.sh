@@ -1,5 +1,6 @@
 #! /bin/bash
-# sudo apt-get update
+sudo apt-get update
+sudo apt-get install -y sqlite3
 # sudo apt-get install -y apache2
 # sudo systemctl start apache2
 # sudo systemctl enable apache2
@@ -27,3 +28,7 @@ REV_SERVER=false
 EOF
 
 curl -sSL https://install.pi-hole.net | sudo bash /dev/stdin --unattended
+
+sudo sqlite3 /etc/pihole/gravity.db "INSERT INTO adlist (address, enabled, comment) VALUES ('https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-domains.txt', 1, 'anti-AD');"
+
+pihole -g

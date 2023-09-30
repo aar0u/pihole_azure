@@ -1,28 +1,3 @@
-resource "random_pet" "rg_name" {
-  prefix = var.resource_group_name_prefix
-}
-
-resource "azurerm_resource_group" "rg" {
-  location = var.resource_group_location
-  name     = random_pet.rg_name.id
-}
-
-# Create virtual network
-resource "azurerm_virtual_network" "my_terraform_network" {
-  name                = "my-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-}
-
-# Create subnet
-resource "azurerm_subnet" "my_terraform_subnet" {
-  name                 = "my-subnet"
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.my_terraform_network.name
-  address_prefixes     = ["10.0.1.0/24"]
-}
-
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "my_terraform_nsg" {
   name                = "my-network-security-group"
@@ -126,7 +101,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
     version   = "latest"
   }
 
-  computer_name  = "my-vm-pihole"
+  computer_name  = "pihole"
   admin_username = var.username
 
   admin_ssh_key {
