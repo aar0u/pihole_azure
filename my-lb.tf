@@ -24,13 +24,6 @@ resource "azurerm_lb_backend_address_pool" "my_terraform_lb_pool" {
   name            = "backend-pool"
 }
 
-resource "azurerm_lb_backend_address_pool_address" "my_terraform_lb_pool_adds" {
-  name                    = "backend-ip"
-  backend_address_pool_id = azurerm_lb_backend_address_pool.my_terraform_lb_pool.id
-  virtual_network_id      = azurerm_virtual_network.my_terraform_network.id
-  ip_address              = azurerm_network_interface.my_terraform_nic.private_ip_address
-}
-
 resource "azurerm_lb_rule" "my_lb_rule_ssh" {
   # resource_group_name            = azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.my_terraform_lb.id
