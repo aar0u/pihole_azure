@@ -5,12 +5,12 @@ locals {
 }
 
 # Create virtual machine
-resource "azurerm_linux_virtual_machine_scale_set" "my_terraform_vm" {
+resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
   name                 = "${local.vm_name}-scaleset"
   location             = azurerm_resource_group.rg.location
   resource_group_name  = azurerm_resource_group.rg.name
   sku                  = "Standard_B1s"
-  instances            = 1
+  instances            = 0
   user_data            = base64encode(local.linux_init)
   computer_name_prefix = "${local.vm_name}-vm-"
   admin_username       = var.username
@@ -42,6 +42,26 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_terraform_vm" {
       primary                                = true
       subnet_id                              = azurerm_subnet.my_terraform_subnet.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.my_terraform_lb_pool.id]
+    }
+  }
+}
+
+resource "azurerm_monitor_autoscale_setting" "my_scale_set_autoscale" {
+  name                = "${local.vm_name}-scaleset-autoscale-profiles"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  target_resource_id  = azurerm_linux_virtual_machine_scale_set.my_scale_set.id
+  notification {
+    email {
+      send_to_subscription_administrator = true
+    }
+  }
+  profile {
+    name = "profile1"
+    capacity {
+      default = 1
+      minimum = 1
+      maximum = 1
     }
   }
 }
