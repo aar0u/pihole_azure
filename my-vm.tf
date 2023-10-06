@@ -10,7 +10,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
   location             = azurerm_resource_group.rg.location
   resource_group_name  = azurerm_resource_group.rg.name
   sku                  = "Standard_B1s"
-  instances            = 0
+  instances            = 1
   user_data            = base64encode(local.linux_init)
   computer_name_prefix = "${local.vm_name}-vm-"
   admin_username       = var.username

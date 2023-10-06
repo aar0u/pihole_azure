@@ -18,6 +18,5 @@ variable "public_key" {
 }
 
 variable "source_ip" {
-  default     = ""
   description = "The IP to access the new VM."
 }
