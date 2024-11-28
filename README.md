@@ -11,13 +11,13 @@ Use `az login` to [authenticate](https://learn.microsoft.com/en-us/azure/develop
 User `./z.terraform-apply.sh` to deploy.
 
 ### Update whitelisted IP
-User `./z.update-nsg-ip.sh` to update whilelisted IP to current IP.
+User `./z.update-nsg-ip.sh` to update whilelisted IP to current IP.\
 Use `./z.update-nsg-ip.sh 1.2.3.4` to update whitlelisted IP to certain IP(ex: 1.2.3.4).
 
 ### Web Portal
-http://{lb-public-ip}:91
+http://{lb-public-ip}:91\
 default password: pwd
 
 ### SSH
-ssh -v azureuser@{lb-public-ip} -p 81
+ssh -v azureuser@{lb-public-ip} -p 81\
 with your own pihole.pem paired with public_key in variables.tf
