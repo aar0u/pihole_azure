@@ -1,4 +1,4 @@
-### Arerequisite
+### Prerequisite
 - Azure CLI
 - Terraform
 - curl
@@ -13,3 +13,7 @@ User `./z.terraform-apply.sh` to deploy.
 ### Update whitelisted IP
 User `./z.update-nsg-ip.sh` to update whilelisted IP to current IP.
 Use `./z.update-nsg-ip.sh 1.2.3.4` to update whitlelisted IP to certain IP(ex: 1.2.3.4).
+
+### Web Portal
+http://{lb-public-ip}:91
+default password: pwd
