@@ -17,3 +17,7 @@ Use `./z.update-nsg-ip.sh 1.2.3.4` to update whitlelisted IP to certain IP(ex: 1
 ### Web Portal
 http://{lb-public-ip}:91
 default password: pwd
+
+### SSH
+ssh -v azureuser@{lb-public-ip} -p 81
+with your own pihole.pem paired with public_key in variables.tf
