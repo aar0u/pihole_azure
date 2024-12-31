@@ -7,9 +7,16 @@ sudo apt-get install -y sqlite3
 # echo "<h1>Azure Linux VM with Web Server</h1>" | sudo tee /var/www/html/index.html
 
 echo WEBPASSWORD: pwd
-echo ${public_ip} pi.home | sudo tee -a /etc/hosts
+
+sudo cat << EOF >> /etc/hosts
+${public_ip} pi.home
+192.168.31.171 mb.home
+192.168.31.172 tv.home
+192.168.31.173 print.home
+EOF
 
 sudo mkdir -p /etc/pihole
+
 sudo tee /etc/pihole/setupVars.conf > /dev/null << EOF
 PIHOLE_INTERFACE=eth0
 QUERY_LOGGING=true

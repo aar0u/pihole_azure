@@ -33,6 +33,7 @@ resource "azurerm_lb_rule" "my_lb_rule_ssh" {
   backend_port                   = 22
   frontend_ip_configuration_name = "public-ip-config"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.my_terraform_lb_pool.id]
+  disable_outbound_snat          = true
 }
 
 resource "azurerm_lb_rule" "my_lb_rule_dns" {
@@ -43,6 +44,7 @@ resource "azurerm_lb_rule" "my_lb_rule_dns" {
   backend_port                   = 53
   frontend_ip_configuration_name = "public-ip-config"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.my_terraform_lb_pool.id]
+  disable_outbound_snat          = true
 }
 
 resource "azurerm_lb_rule" "my_lb_rule_web" {
@@ -53,4 +55,5 @@ resource "azurerm_lb_rule" "my_lb_rule_web" {
   backend_port                   = 80
   frontend_ip_configuration_name = "public-ip-config"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.my_terraform_lb_pool.id]
+  disable_outbound_snat          = true
 }
