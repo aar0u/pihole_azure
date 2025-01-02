@@ -1,3 +1,6 @@
+# Get current subscription details
+data "azurerm_subscription" "current" {}
+
 terraform {
   required_version = ">=0.12"
 

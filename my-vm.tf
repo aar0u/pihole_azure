@@ -1,6 +1,14 @@
 locals {
   linux_init = templatefile("./templates/linux-init.sh",
-  { public_ip : azurerm_public_ip.my_terraform_public_ip_lb.ip_address })
+    {
+      resource_group_name : azurerm_resource_group.rg.name,
+      nsg_name : azurerm_network_security_group.my_terraform_nsg.name,
+      public_ip : azurerm_public_ip.my_terraform_public_ip_lb.ip_address,
+      subscription_id : data.azurerm_subscription.current.subscription_id,
+      module_path : path.module,
+      username : var.username
+    }
+  )
   vm_name = "pihole"
 }
 
@@ -27,6 +35,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
     version   = "latest"
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
@@ -51,11 +63,7 @@ resource "azurerm_monitor_autoscale_setting" "my_scale_set_autoscale" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   target_resource_id  = azurerm_linux_virtual_machine_scale_set.my_scale_set.id
-  notification {
-    email {
-      send_to_subscription_administrator = true
-    }
-  }
+
   profile {
     name = "profile1"
     capacity {
@@ -66,43 +74,8 @@ resource "azurerm_monitor_autoscale_setting" "my_scale_set_autoscale" {
   }
 }
 
-# Create Network Security Group and rule
-resource "azurerm_network_security_group" "my_terraform_nsg" {
-  name                = "my-network-security-group"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  security_rule {
-    name                       = "SSH"
-    priority                   = 300
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = var.source_ip
-    destination_address_prefix = "*"
-  }
-  security_rule {
-    name                       = "DNS"
-    priority                   = 310
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Udp"
-    source_port_range          = "*"
-    destination_port_range     = "53"
-    source_address_prefix      = var.source_ip
-    destination_address_prefix = "*"
-  }
-  security_rule {
-    name                       = "WEB"
-    priority                   = 320
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = var.source_ip
-    destination_address_prefix = "*"
-  }
+resource "azurerm_role_assignment" "vm_nsg_contributor" {
+  scope                = azurerm_network_security_group.my_terraform_nsg.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_linux_virtual_machine_scale_set.my_scale_set.identity[0].principal_id
 }
