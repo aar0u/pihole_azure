@@ -2,6 +2,10 @@ output "resource_group_name" {
   value = azurerm_resource_group.rg.name
 }
 
-output "my_lb_ip_out" {
-  value = azurerm_public_ip.my_terraform_public_ip_lb.ip_address
+output "public_ip" {
+  value = azurerm_public_ip.public_ip1.ip_address
+}
+
+output "lb_pool_outbound" {
+  value = azurerm_lb_backend_address_pool.lb_pool_outbound.id
 }

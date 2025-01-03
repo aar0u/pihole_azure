@@ -3,7 +3,7 @@ locals {
     {
       resource_group_name : azurerm_resource_group.rg.name,
       nsg_name : azurerm_network_security_group.my_terraform_nsg.name,
-      public_ip : azurerm_public_ip.my_terraform_public_ip_lb.ip_address,
+      public_ip : azurerm_public_ip.public_ip1.ip_address,
       subscription_id : data.azurerm_subscription.current.subscription_id,
       module_path : path.module,
       username : var.username
@@ -41,19 +41,19 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
 
   os_disk {
     caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
+    storage_account_type = "StandardSSD_LRS"
   }
 
   network_interface {
-    name                      = "${local.vm_name}-scaleset-ni"
+    name                      = "${local.vm_name}-scaleset-nic"
     primary                   = true
     network_security_group_id = azurerm_network_security_group.my_terraform_nsg.id
 
     ip_configuration {
-      name                                   = "${local.vm_name}-scaleset-ip-configuration"
+      name                                   = "${local.vm_name}-scaleset-ip-conf"
       primary                                = true
-      subnet_id                              = azurerm_subnet.my_terraform_subnet.id
-      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.my_terraform_lb_pool.id]
+      subnet_id                              = azurerm_subnet.subnet_pihole.id
+      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.lb_pool_outbound.id, azurerm_lb_backend_address_pool.lb_pool_pihole.id]
     }
   }
 }

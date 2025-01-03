@@ -3,8 +3,8 @@ variable "resource_group_location" {
   description = "Location of the resource group."
 }
 
-variable "resource_group_name" {
-  default     = "rg-major-grub"
+variable "target_group_name" {
+  default     = "pihole"
   description = "Resource group name."
 }
 
