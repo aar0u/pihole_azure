@@ -9,18 +9,18 @@ locals {
       username : var.username
     }
   )
-  vm_name = "pihole"
+  sku = "Standard_B2ts_v2"
 }
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
-  name                 = "${local.vm_name}-scaleset"
+  name                 = "${var.target_group_name}-ss"
   location             = azurerm_resource_group.rg.location
   resource_group_name  = azurerm_resource_group.rg.name
-  sku                  = "Standard_B1s"
+  sku                  = local.sku
   instances            = 1
   user_data            = base64encode(local.linux_init)
-  computer_name_prefix = "${local.vm_name}-vm-"
+  computer_name_prefix = "${var.target_group_name}-vm-"
   admin_username       = var.username
 
   admin_ssh_key {
@@ -30,8 +30,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
+    offer     = "0001-com-ubuntu-minimal-jammy"
+    sku       = "minimal-22_04-lts-gen2"
     version   = "latest"
   }
 
@@ -42,15 +42,16 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
+    disk_size_gb = 30
   }
 
   network_interface {
-    name                      = "${local.vm_name}-scaleset-nic"
+    name                      = "${var.target_group_name}-scaleset-nic"
     primary                   = true
     network_security_group_id = azurerm_network_security_group.my_terraform_nsg.id
 
     ip_configuration {
-      name                                   = "${local.vm_name}-scaleset-ip-conf"
+      name                                   = "${var.target_group_name}-scaleset-ip-conf"
       primary                                = true
       subnet_id                              = azurerm_subnet.subnet_pihole.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.lb_pool_outbound.id, azurerm_lb_backend_address_pool.lb_pool_pihole.id]
@@ -59,7 +60,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
 }
 
 resource "azurerm_monitor_autoscale_setting" "my_scale_set_autoscale" {
-  name                = "${local.vm_name}-scaleset-autoscale-profiles"
+  name                = "${var.target_group_name}-scaleset-autoscale-profiles"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   target_resource_id  = azurerm_linux_virtual_machine_scale_set.my_scale_set.id
