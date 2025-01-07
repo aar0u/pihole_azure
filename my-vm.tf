@@ -1,5 +1,5 @@
 locals {
-  linux_init = templatefile("./templates/linux-init.sh",
+  init_script = templatefile("./scripts/init.sh",
     {
       resource_group_name : azurerm_resource_group.rg.name,
       nsg_name : azurerm_network_security_group.my_terraform_nsg.name,
@@ -9,7 +9,7 @@ locals {
       username : var.username
     }
   )
-  sku = "Standard_B2ts_v2"
+  sku = "Standard_B2ats_v2"
 }
 
 # Create virtual machine
@@ -19,9 +19,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
   resource_group_name  = azurerm_resource_group.rg.name
   sku                  = local.sku
   instances            = 1
-  user_data            = base64encode(local.linux_init)
+  user_data            = base64encode(local.init_script)
   computer_name_prefix = "${var.target_group_name}-vm-"
   admin_username       = var.username
+  zones                = ["1"]
 
   admin_ssh_key {
     username   = var.username
@@ -42,7 +43,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "my_scale_set" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
-    disk_size_gb = 30
+    disk_size_gb         = 30
   }
 
   network_interface {
